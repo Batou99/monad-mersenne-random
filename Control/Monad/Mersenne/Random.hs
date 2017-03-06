@@ -37,6 +37,7 @@ import Control.Monad
 import Data.Word
 import Data.Int
 import System.Random.Mersenne.Pure64
+import Control.Applicative -- Otherwise you can't do the Applicative instance.
 
 
 -- | The state of a random monad, optimized for performance.
@@ -46,6 +47,13 @@ data R a = R !a {-# UNPACK #-}!PureMT
 
 -- | A basic random monad, for generating random numbers from pure mersenne twisters.
 newtype Rand a = Rand { runRand :: PureMT -> R a }
+
+instance Functor Rand where
+  fmap = liftM
+
+instance Applicative Rand where
+  pure  = return
+  (<*>) = ap
 
 instance Monad Rand where
 
